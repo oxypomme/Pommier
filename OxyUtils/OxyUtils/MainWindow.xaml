@@ -5,7 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OxyUtils"
         mc:Ignorable="d"
-        Title="OxyUtils" Height="450" Width="800">
-    <Grid>
-    </Grid>
+        d:DesignHeight="300" d:DesignWidth="250"
+        Title="OxyUtils" SizeToContent="WidthAndHeight" MinWidth="235">
+    <StackPanel Margin="5">
+        <Button Name="adbBTN" Content="Reload ADB" Click="adbBTN_Click" Margin="5" Width="95" Height="25" HorizontalAlignment="Left" />
+        <GroupBox Header="ForceBindIP">
+            <StackPanel>
+                <ComboBox Name="ipCB" Margin="5" />
+                <Button Name="esoBTN" Content="ESO" Click="esoBTN_Click" Margin="5" Width="95" Height="25" HorizontalAlignment="Left" />
+                <Button Name="zoomBTN" Content="Zoom" Click="zoomBTN_Click" Margin="5" Width="95" Height="25" HorizontalAlignment="Left" />
+                <Button Name="steamBTN" Content="Steam" Click="steamBTN_Click" Margin="5" Width="95" Height="25" HorizontalAlignment="Left" />
+            </StackPanel>
+        </GroupBox>
+        <CheckBox Name="startupCH" Content="Launch at Startup" Checked="startupCH_Checked" Margin="5" />
+    </StackPanel>
 </Window>
