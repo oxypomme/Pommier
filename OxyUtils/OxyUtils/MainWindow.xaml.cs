@@ -1,4 +1,4 @@
-﻿using IWshRuntimeLibrary;
+﻿using IWsh = IWshRuntimeLibrary;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,7 +16,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.IO;
 
 namespace OxyUtils
 {
@@ -27,9 +27,14 @@ namespace OxyUtils
     {
         public Forms.NotifyIcon notify = new Forms.NotifyIcon();
 
+        private string startupPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "OxyUtils.lnk");
+
         public MainWindow()
         {
             InitializeComponent();
+
+            if (File.Exists(startupPath))
+                cbx_startup.IsChecked = true;
 
             lbl_version.Content = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
@@ -61,7 +66,7 @@ namespace OxyUtils
                             case System.Net.Sockets.AddressFamily.InterNetwork:         // si c'est une IPv4
                                 var item = new ComboBoxItem();
                                 item.Tag = add.ToString();
-                                item.Content = interf.Name + ", " /*+ add.ToString()*/;
+                                item.Content = interf.Name + ", " + add.ToString();
                                 cb_network.Items.Add(item);
                                 break;
 
@@ -93,16 +98,15 @@ namespace OxyUtils
 
         private void ForceBindIP(string exe, string arguments = "", bool is64bits = false)
         {
-            var path = exe.Split('\\');
             // Si le programme n'est pas sur le C:, on change de disque
-            if (path[0][0] != 'C')
-                Commander.RegisterNewCommand(path.First());
+            if (exe[0] != 'C')
+                Commander.RegisterNewCommand(exe[0] + ":");
 
             // On atteint le répertoire du logiciel à ouvrir
-            Commander.RegisterNewCommand("cd \"" + string.Join("\\", path.Except(new[] { path.Last() })) + "\"");
+            Commander.RegisterNewCommand("cd \"" + Path.GetDirectoryName(exe) + "\"");
 
             var command = new StringBuilder();
-            // On prépare ForceBindIP (64 si nécéssaire)
+            // On prépare ForceBindIP (64 si nécessaire)
             command.Append("\"" + @"C:\Program Files (x86)\ForceBindIP\ForceBindIP");
             if (is64bits)
                 command.Append("64");
@@ -116,6 +120,7 @@ namespace OxyUtils
             catch (NullReferenceException)
             {
                 MessageBox.Show("Select an IP to bind !", "OxyUtils", MessageBoxButton.OK, MessageBoxImage.Error);
+                Commander.ClearCommands();
                 return;
             }
             // On génère la commande
@@ -166,12 +171,16 @@ namespace OxyUtils
         {
             if ((sender as CheckBox).IsChecked.Value)
             {
-                WshShell shell = new WshShell();
-                IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(Environment.GetFolderPath(Environment.SpecialFolder.Startup) + "oxyutils.exe");
+                var shell = new IWsh.WshShell();
+                var shortcut = (IWsh.IWshShortcut)shell.CreateShortcut(startupPath);
+
                 shortcut.Description = "Shortcut for OxyUtils";
-                shortcut.TargetPath = Environment.CurrentDirectory;
+                shortcut.TargetPath = Path.Combine(Environment.CurrentDirectory, "OxyUtils.exe");
+                //shortcut.IconLocation = Path.Combine(Environment.CurrentDirectory, "icon.ico");
                 shortcut.Save();
             }
+            else
+                File.Delete(startupPath);
         }
     }
 }

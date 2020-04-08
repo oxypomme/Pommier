@@ -26,7 +26,7 @@
                 </WrapPanel>
             </StackPanel>
         </GroupBox>
-        <CheckBox Name="cbx_startup" Content="Launch at Startup" Checked="cbx_startup_Checked" Margin="5" />
+        <CheckBox Name="cbx_startup" Content="Launch at Startup" Checked="cbx_startup_Checked" Unchecked="cbx_startup_Checked" Margin="5" />
         <Label Name="lbl_version" Content="v0.0.0.0" HorizontalAlignment="Right" />
     </StackPanel>
 </Window>
