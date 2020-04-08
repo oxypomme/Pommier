@@ -4,6 +4,10 @@
              xmlns:local="clr-namespace:OxyUtils"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Margin" Value="5" />
+            <Setter Property="Width" Value="100" />
+            <Setter Property="Height" Value="25" />
+        </Style>
     </Application.Resources>
 </Application>

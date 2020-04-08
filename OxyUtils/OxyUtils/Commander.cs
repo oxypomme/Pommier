@@ -24,6 +24,8 @@ namespace OxyUtils
         public static void ClearCommands()
         {
             info.Arguments = "";
+            if (!string.IsNullOrEmpty(info.Verb))
+                info.Verb = "";
             Console.WriteLine("Commands cleared !");
         }
 
@@ -39,6 +41,12 @@ namespace OxyUtils
             Console.WriteLine("Commands stopped");
 
             ClearCommands();
+        }
+
+        public static void InitAdminRights()
+        {
+            info.Verb = "runas";
+            Console.WriteLine("Admin rights needed !");
         }
     }
 }

@@ -9,20 +9,21 @@
         Closing="Window_Closing">
     <StackPanel Margin="5">
         <WrapPanel Margin="5">
-            <Button Name="btn_adb" Content="_Reload ADB" Click="btn_adb_Click" Margin="5" Width="100" Height="25" HorizontalAlignment="Left" />
-            <!--<Button Name="btn_" Content="" Click="" Margin="5" Width="100" Height="25" HorizontalAlignment="Left" />-->
+            <Button Name="btn_adb" Content="_Reload ADB" Click="btn_adb_Click" />
+            <!--<Button Name="btn_" Content="" Click="" Margin="5" Width="100" Height="25" />-->
         </WrapPanel>
         <GroupBox Header="ForceBindIP">
             <StackPanel>
                 <ComboBox Name="cb_network" Margin="5" />
                 <WrapPanel>
-                    <Button Name="btn_eso" Content="ESO" Click="btn_eso_Click" Margin="5" Width="100" Height="25" HorizontalAlignment="Left" />
-                    <Button Name="btn_uplay" Content="Uplay" Click="btn_uplay_Click" Margin="5" Width="100" Height="25" HorizontalAlignment="Left" />
-                    <Button Name="btn_steam" Content="Steam" Click="btn_steam_Click" Margin="5" Width="100" Height="25" HorizontalAlignment="Left" />
-                    <Button Name="btn_origin" Content="Origin" Click="btn_origin_Click" Margin="5" Width="100" Height="25" HorizontalAlignment="Left" />
+                    <Button Name="btn_eso" Content="ESO" Click="btn_eso_Click" />
+                    <Button Name="btn_uplay" Content="Uplay" Click="btn_uplay_Click" />
+                    <Button Name="btn_steam" Content="Steam" Click="btn_steam_Click" />
+                    <Button Name="btn_origin" Content="Origin" Click="btn_origin_Click" />
+                    <Button Name="btn_vsc" Content="VS Community" Click="btn_vsc_Click" />
                     <Separator Width="210" Margin="5" />
-                    <Button Name="btn_zoom" Content="Zoom" Click="btn_zoom_Click" Margin="5" Width="100" Height="25" HorizontalAlignment="Left" />
-                    <Button Name="btn_teams" Content="Teams" Click="btn_teams_Click" Margin="5" Width="100" Height="25" HorizontalAlignment="Left" />
+                    <Button Name="btn_zoom" Content="Zoom" Click="btn_zoom_Click" />
+                    <Button Name="btn_teams" Content="Teams" Click="btn_teams_Click" />
                 </WrapPanel>
             </StackPanel>
         </GroupBox>

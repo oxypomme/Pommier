@@ -17,6 +17,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.IO;
+using System.Security.Principal;
+using System.ComponentModel;
+using System.Reflection;
 
 namespace OxyUtils
 {
@@ -52,7 +55,7 @@ namespace OxyUtils
                 cmNotify.MenuItems.Add(item);
             }
 
-            notify.Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            notify.Icon = System.Drawing.Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
             notify.ContextMenu = cmNotify;
             notify.Click += NotifyMenu_ShowClick;
 
@@ -75,7 +78,7 @@ namespace OxyUtils
                         }
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void Window_Closing(object sender, CancelEventArgs e)
         {
             notify.Visible = true;
             notify.ShowBalloonTip(5000, "OxyUtils is now reduced !", "At least, it doesn't take many place...", Forms.ToolTipIcon.Info);
@@ -94,6 +97,22 @@ namespace OxyUtils
         private void NotifyMenu_QuitClick(object sender, EventArgs e)
         {
             Environment.Exit(1);
+        }
+
+        private void cbx_startup_Checked(object sender, RoutedEventArgs e)
+        {
+            if ((sender as CheckBox).IsChecked.Value)
+            {
+                var shell = new IWsh.WshShell();
+                var shortcut = (IWsh.IWshShortcut)shell.CreateShortcut(startupPath);
+
+                shortcut.Description = "Shortcut for OxyUtils";
+                shortcut.TargetPath = Path.Combine(Environment.CurrentDirectory, "OxyUtils.exe");
+                //shortcut.IconLocation = Path.Combine(Environment.CurrentDirectory, "icon.ico");
+                shortcut.Save();
+            }
+            else
+                File.Delete(startupPath);
         }
 
         private void ForceBindIP(string exe, string arguments = "", bool is64bits = false)
@@ -167,20 +186,10 @@ namespace OxyUtils
             ForceBindIP(@"C:\Users\Tom SUBLET\AppData\Local\Microsoft\Teams\Update.exe", "--processStart \"Teams.exe\"", true);
         }
 
-        private void cbx_startup_Checked(object sender, RoutedEventArgs e)
+        private void btn_vsc_Click(object sender, RoutedEventArgs e)
         {
-            if ((sender as CheckBox).IsChecked.Value)
-            {
-                var shell = new IWsh.WshShell();
-                var shortcut = (IWsh.IWshShortcut)shell.CreateShortcut(startupPath);
-
-                shortcut.Description = "Shortcut for OxyUtils";
-                shortcut.TargetPath = Path.Combine(Environment.CurrentDirectory, "OxyUtils.exe");
-                //shortcut.IconLocation = Path.Combine(Environment.CurrentDirectory, "icon.ico");
-                shortcut.Save();
-            }
-            else
-                File.Delete(startupPath);
+            Commander.InitAdminRights();
+            ForceBindIP(@"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe");
         }
     }
 }
