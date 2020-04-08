@@ -4,19 +4,28 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OxyUtils"
-        mc:Ignorable="d"
-        d:DesignHeight="300" d:DesignWidth="250"
-        Title="OxyUtils" SizeToContent="WidthAndHeight" MinWidth="235">
+        mc:Ignorable="d" d:DesignWidth="250"
+        Title="OxyUtils" SizeToContent="Height" Width="250" MinWidth="250" MaxWidth="250"
+        Closing="Window_Closing">
     <StackPanel Margin="5">
-        <Button Name="adbBTN" Content="Reload ADB" Click="adbBTN_Click" Margin="5" Width="95" Height="25" HorizontalAlignment="Left" />
+        <WrapPanel Margin="5">
+            <Button Name="adbBTN" Content="Reload ADB" Click="adbBTN_Click" Margin="5" Width="95" Height="25" HorizontalAlignment="Left" />
+            <Button Name="eBTN" Content="..." Click="adbBTN_Click" Margin="5" Width="95" Height="25" HorizontalAlignment="Left" />
+        </WrapPanel>
         <GroupBox Header="ForceBindIP">
             <StackPanel>
                 <ComboBox Name="ipCB" Margin="5" />
-                <Button Name="esoBTN" Content="ESO" Click="esoBTN_Click" Margin="5" Width="95" Height="25" HorizontalAlignment="Left" />
-                <Button Name="zoomBTN" Content="Zoom" Click="zoomBTN_Click" Margin="5" Width="95" Height="25" HorizontalAlignment="Left" />
-                <Button Name="steamBTN" Content="Steam" Click="steamBTN_Click" Margin="5" Width="95" Height="25" HorizontalAlignment="Left" />
+                <WrapPanel>
+                    <Button Name="esoBTN" Content="ESO" Click="esoBTN_Click" Margin="5" Width="95" Height="25" HorizontalAlignment="Left" />
+                    <Button Name="uplayBTN" Content="UPlay" Click="uplayBTN_Click" Margin="5" Width="95" Height="25" HorizontalAlignment="Left" />
+                    <Button Name="steamBTN" Content="Steam" Click="steamBTN_Click" Margin="5" Width="95" Height="25" HorizontalAlignment="Left" />
+                    <Button Name="originBTN" Content="Origin" Click="originBTN_Click" Margin="5" Width="95" Height="25" HorizontalAlignment="Left" />
+                    <Button Name="zoomBTN" Content="Zoom" Click="zoomBTN_Click" Margin="5" Width="95" Height="25" HorizontalAlignment="Left" />
+                    <Button Name="teamsBTN" Content="Teams" Click="teamsBTN_Click" Margin="5" Width="95" Height="25" HorizontalAlignment="Left" />
+                </WrapPanel>
             </StackPanel>
         </GroupBox>
         <CheckBox Name="startupCH" Content="Launch at Startup" Checked="startupCH_Checked" Margin="5" />
+        <Label Name="lbl_version" Content="v0.0.0.0" HorizontalAlignment="Right" />
     </StackPanel>
 </Window>
