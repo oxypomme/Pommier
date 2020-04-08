@@ -14,7 +14,7 @@ namespace OxyUtils
 
         public static void RegisterNewCommand(string command)
         {
-            if (info.Arguments == "")
+            if (info.Arguments == "")  // si c'est la première commande
                 info.Arguments += "/k " + command + " ";
             else
                 info.Arguments += "&& " + command + " ";
@@ -29,9 +29,15 @@ namespace OxyUtils
 
         public static void RunCommands()
         {
+            Console.WriteLine("Commands starting...");
             process = Process.Start(info);
+
+            Console.WriteLine("Commands ended !");
             System.Threading.Thread.Sleep(1000);
+
             process.Kill();
+            Console.WriteLine("Commands stopped");
+
             ClearCommands();
         }
     }

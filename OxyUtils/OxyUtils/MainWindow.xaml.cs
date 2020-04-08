@@ -34,26 +34,35 @@ namespace OxyUtils
             lbl_version.Content = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
             var cmNotify = new Forms.ContextMenu();
-            cmNotify.MenuItems.Add("&Show");
-            cmNotify.MenuItems[0].Click += NotifyMenu_ShowClick;
-            cmNotify.MenuItems.Add("&Quit");
-            cmNotify.MenuItems[1].Click += NotifyMenu_QuitClick;
+            {
+                var item = new Forms.MenuItem();
+
+                item.Text = "&Show";
+                item.Click += NotifyMenu_ShowClick;
+                cmNotify.MenuItems.Add(item);
+
+                item = new Forms.MenuItem();
+                item.Text = "&Quit";
+                item.Click += NotifyMenu_QuitClick;
+                cmNotify.MenuItems.Add(item);
+            }
+
             notify.Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
             notify.ContextMenu = cmNotify;
             notify.Click += NotifyMenu_ShowClick;
 
             IPAddress add;
             // Enumerate IP addresses
-            foreach (var interf in NetworkInterface.GetAllNetworkInterfaces())
-                foreach (var address in interf.GetIPProperties().UnicastAddresses)
-                    if (IPAddress.TryParse(address.Address.ToString(), out add))
+            foreach (var interf in NetworkInterface.GetAllNetworkInterfaces())          // pour chaque les carte réseau
+                foreach (var address in interf.GetIPProperties().UnicastAddresses)      // pour chaque adresse de la carte
+                    if (IPAddress.TryParse(address.Address.ToString(), out add))        // qui est une IP
                         switch (add.AddressFamily)
                         {
-                            case System.Net.Sockets.AddressFamily.InterNetwork:
+                            case System.Net.Sockets.AddressFamily.InterNetwork:         // si c'est une IPv4
                                 var item = new ComboBoxItem();
                                 item.Tag = add.ToString();
-                                item.Content = interf.Name + ", " + add.ToString();
-                                ipCB.Items.Add(item);
+                                item.Content = interf.Name + ", " /*+ add.ToString()*/;
+                                cb_network.Items.Add(item);
                                 break;
 
                             default:
@@ -84,70 +93,76 @@ namespace OxyUtils
 
         private void ForceBindIP(string exe, string arguments = "", bool is64bits = false)
         {
-            var command = new StringBuilder();
             var path = exe.Split('\\');
-
+            // Si le programme n'est pas sur le C:, on change de disque
             if (path[0][0] != 'C')
                 Commander.RegisterNewCommand(path.First());
+
+            // On atteint le répertoire du logiciel à ouvrir
             Commander.RegisterNewCommand("cd \"" + string.Join("\\", path.Except(new[] { path.Last() })) + "\"");
 
-            command.Append("ForceBindIP");
+            var command = new StringBuilder();
+            // On prépare ForceBindIP (64 si nécéssaire)
+            command.Append("\"" + @"C:\Program Files (x86)\ForceBindIP\ForceBindIP");
             if (is64bits)
                 command.Append("64");
-            command.Append(".exe ");
+            command.Append(".exe\" ");
 
+            // On récupère l'ip à utiliser
             try
             {
-                command.Append((ipCB.SelectedItem as ComboBoxItem).Tag);
+                command.Append((cb_network.SelectedItem as ComboBoxItem).Tag);
             }
             catch (NullReferenceException)
             {
                 MessageBox.Show("Select an IP to bind !", "OxyUtils", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            command.AppendFormat(" \"{exe}\"{1}", (arguments != "" ? " " + arguments : ""));
+            // On génère la commande
+            command.AppendFormat(" \"{0}\"{1}", exe, (arguments != "" ? " " + arguments : ""));
 
+            // Qu'on enregistre et qu'on exécute
             Commander.RegisterNewCommand(command.ToString());
-            //Commander.RunCommands();
+            Commander.RunCommands();
         }
 
-        private void adbBTN_Click(object sender, RoutedEventArgs e)
+        private void btn_adb_Click(object sender, RoutedEventArgs e)
         {
             Commander.RegisterNewCommand("\"" + @"C:\Program Files (x86)\Minimal ADB and Fastboot\adb.exe" + "\" reverse tcp:8500 tcp:8500");
             Commander.RunCommands();
         }
 
-        private void esoBTN_Click(object sender, RoutedEventArgs e)
+        private void btn_eso_Click(object sender, RoutedEventArgs e)
         {
             ForceBindIP(@"D:\Program Files (x86)\Zenimax Online\Launcher\Bethesda.net_Launcher.exe");
         }
 
-        private void uplayBTN_Click(object sender, RoutedEventArgs e)
+        private void btn_uplay_Click(object sender, RoutedEventArgs e)
         {
             ForceBindIP(@"D:\Program Files (x86)\Ubisoft\Ubisoft Game Launcher\Uplay.exe");
         }
 
-        private void steamBTN_Click(object sender, RoutedEventArgs e)
+        private void btn_steam_Click(object sender, RoutedEventArgs e)
         {
             ForceBindIP(@"D:\Program Files (x86)\Steam\steam.exe");
         }
 
-        private void originBTN_Click(object sender, RoutedEventArgs e)
+        private void btn_origin_Click(object sender, RoutedEventArgs e)
         {
             ForceBindIP(@"D:\Program Files (x86)\Origin\Origin.exe");
         }
 
-        private void zoomBTN_Click(object sender, RoutedEventArgs e)
+        private void btn_zoom_Click(object sender, RoutedEventArgs e)
         {
             ForceBindIP(@"C:\Users\Tom SUBLET\AppData\Roaming\Zoom\bin\Zoom.exe");
         }
 
-        private void teamsBTN_Click(object sender, RoutedEventArgs e)
+        private void btn_teams_Click(object sender, RoutedEventArgs e)
         {
             ForceBindIP(@"C:\Users\Tom SUBLET\AppData\Local\Microsoft\Teams\Update.exe", "--processStart \"Teams.exe\"", true);
         }
 
-        private void startupCH_Checked(object sender, RoutedEventArgs e)
+        private void cbx_startup_Checked(object sender, RoutedEventArgs e)
         {
             if ((sender as CheckBox).IsChecked.Value)
             {

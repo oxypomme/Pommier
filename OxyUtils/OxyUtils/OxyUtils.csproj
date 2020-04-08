@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{E20B8077-42B4-49FA-9BB3-398450E96F30}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>OxyUtils</RootNamespace>
     <AssemblyName>OxyUtils</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
