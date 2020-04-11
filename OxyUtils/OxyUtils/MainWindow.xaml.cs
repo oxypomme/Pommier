@@ -115,6 +115,11 @@ namespace OxyUtils
                 File.Delete(startupPath);
         }
 
+        private void ForceBindIP(string exe, bool is64bits)
+        {
+            ForceBindIP(exe, "", is64bits);
+        }
+
         private void ForceBindIP(string exe, string arguments = "", bool is64bits = false)
         {
             // Si le programme n'est pas sur le C:, on change de disque
@@ -161,11 +166,6 @@ namespace OxyUtils
             ForceBindIP(@"D:\Program Files (x86)\Zenimax Online\Launcher\Bethesda.net_Launcher.exe");
         }
 
-        private void btn_uplay_Click(object sender, RoutedEventArgs e)
-        {
-            ForceBindIP(@"D:\Program Files (x86)\Ubisoft\Ubisoft Game Launcher\Uplay.exe");
-        }
-
         private void btn_steam_Click(object sender, RoutedEventArgs e)
         {
             ForceBindIP(@"D:\Program Files (x86)\Steam\steam.exe");
@@ -176,6 +176,11 @@ namespace OxyUtils
             ForceBindIP(@"D:\Program Files (x86)\Origin\Origin.exe");
         }
 
+        private void btn_tech_Click(object sender, RoutedEventArgs e)
+        {
+            ForceBindIP(@"C:\Users\Tom SUBLET\AppData\Roaming\.minecraft\TechnicLauncher.exe", true);
+        }
+
         private void btn_zoom_Click(object sender, RoutedEventArgs e)
         {
             ForceBindIP(@"C:\Users\Tom SUBLET\AppData\Roaming\Zoom\bin\Zoom.exe");
@@ -184,12 +189,6 @@ namespace OxyUtils
         private void btn_teams_Click(object sender, RoutedEventArgs e)
         {
             ForceBindIP(@"C:\Users\Tom SUBLET\AppData\Local\Microsoft\Teams\Update.exe", "--processStart \"Teams.exe\"", true);
-        }
-
-        private void btn_vsc_Click(object sender, RoutedEventArgs e)
-        {
-            Commander.InitAdminRights();
-            ForceBindIP(@"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe");
         }
     }
 }
