@@ -176,11 +176,6 @@ namespace OxyUtils
             ForceBindIP(@"D:\Program Files (x86)\Origin\Origin.exe");
         }
 
-        private void btn_tech_Click(object sender, RoutedEventArgs e)
-        {
-            ForceBindIP(@"C:\Users\Tom SUBLET\AppData\Roaming\.minecraft\TechnicLauncher.exe", true);
-        }
-
         private void btn_zoom_Click(object sender, RoutedEventArgs e)
         {
             ForceBindIP(@"C:\Users\Tom SUBLET\AppData\Roaming\Zoom\bin\Zoom.exe");

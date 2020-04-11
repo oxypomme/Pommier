@@ -6,11 +6,10 @@
         xmlns:local="clr-namespace:OxyUtils"
         mc:Ignorable="d" d:DesignWidth="250"
         Title="OxyUtils" SizeToContent="Height" Width="258" MinWidth="258" MaxWidth="258"
-        Closing="Window_Closing">
+        Closing="Window_Closing" ResizeMode="CanMinimize">
     <StackPanel Margin="5">
         <WrapPanel Margin="5">
             <Button Name="btn_adb" Content="_Reload ADB" Click="btn_adb_Click" />
-            <!--<Button Name="btn_" Content="" Click="" Margin="5" Width="100" Height="25" />-->
         </WrapPanel>
         <GroupBox Header="ForceBindIP">
             <StackPanel>
@@ -19,7 +18,6 @@
                     <Button Name="btn_eso" Content="ESO" Click="btn_eso_Click" />
                     <Button Name="btn_steam" Content="Steam" Click="btn_steam_Click" />
                     <Button Name="btn_origin" Content="Origin" Click="btn_origin_Click" />
-                    <Button Name="btn_tech" Content="Technic" Click="btn_tech_Click" />
                     <Separator Width="210" Margin="5" />
                     <Button Name="btn_zoom" Content="Zoom" Click="btn_zoom_Click" />
                     <Button Name="btn_teams" Content="Teams" Click="btn_teams_Click" />
