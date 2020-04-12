@@ -73,10 +73,13 @@ namespace OxyUtils
                         switch (add.AddressFamily)
                         {
                             case System.Net.Sockets.AddressFamily.InterNetwork:         // si c'est une IPv4
-                                var item = new ComboBoxItem();
-                                item.Tag = add.ToString();
-                                item.Content = interf.Name + ", " + add.ToString();
-                                cb_network.Items.Add(item);
+                                if (add.ToString() != "127.0.0.1")
+                                {
+                                    var item = new ComboBoxItem();
+                                    item.Tag = add.ToString();
+                                    item.Content = interf.Name + ", " + add.ToString();
+                                    cb_network.Items.Add(item);
+                                }
                                 break;
 
                             default:
