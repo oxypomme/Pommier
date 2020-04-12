@@ -15,7 +15,7 @@
                 </WrapPanel>
                 <GroupBox Header="ForceBindIP">
                     <StackPanel>
-                        <ComboBox Name="cb_network" Margin="5" Grid.Column="0" />
+                        <ComboBox Name="cb_network" Margin="5" Grid.Column="0" DropDownOpened="cb_network_DropDownOpened" />
                         <WrapPanel>
                             <Button Name="btn_eso" Content="ESO" Click="btn_eso_Click" />
                             <Button Name="btn_steam" Content="Steam" Click="btn_steam_Click" />
@@ -30,14 +30,7 @@
         </TabItem>
         <TabItem Header="Settings">
             <StackPanel Margin="5">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="auto" />
-                    </Grid.ColumnDefinitions>
-                    <CheckBox Name="cbx_startup" Content="Launch at Startup" Checked="cbx_startup_Checked" Unchecked="cbx_startup_Checked" Margin="5,10,5,5" Grid.Column="0" />
-                    <Button Name="btn_network" Content="Reload IPs" Click="btn_network_Click" Grid.Column="1" />
-                </Grid>
+                <CheckBox Name="cbx_startup" Content="Launch at Startup" Checked="cbx_startup_Checked" Unchecked="cbx_startup_Checked" Margin="5,10,5,5" />
                 <Label Name="lbl_version" Content="v0.0.0.0" HorizontalAlignment="Right" />
             </StackPanel>
         </TabItem>

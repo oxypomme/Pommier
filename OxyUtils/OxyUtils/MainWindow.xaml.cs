@@ -124,7 +124,7 @@ namespace OxyUtils
                 File.Delete(startupPath);
         }
 
-        private void btn_network_Click(object sender, RoutedEventArgs e)
+        private void cb_network_DropDownOpened(object sender, EventArgs e)
         {
             ReloadInterfaces();
         }
