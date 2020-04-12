@@ -21,6 +21,8 @@
                             <Button Name="btn_steam" Content="Steam" Click="btn_steam_Click" />
                             <Button Name="btn_origin" Content="Origin" Click="btn_origin_Click" />
                             <Separator Width="210" Margin="5" />
+                            <Button Name="btn_mega" Content="MEGA" Click="btn_mega_Click" />
+                            <Separator Width="210" Margin="5" />
                             <Button Name="btn_zoom" Content="Zoom" Click="btn_zoom_Click" />
                             <Button Name="btn_teams" Content="Teams" Click="btn_teams_Click" />
                         </WrapPanel>

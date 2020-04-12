@@ -45,6 +45,11 @@ namespace OxyUtils
             {
                 var item = new Forms.MenuItem();
 
+                item.Text = "OxyUtils - v" + lbl_version.Content;
+                item.Enabled = false;
+                cmNotify.MenuItems.Add(item);
+
+                item = new Forms.MenuItem();
                 item.Text = "&Show";
                 item.Click += NotifyMenu_ShowClick;
                 cmNotify.MenuItems.Add(item);
@@ -117,7 +122,6 @@ namespace OxyUtils
 
                 shortcut.Description = "Shortcut for OxyUtils";
                 shortcut.TargetPath = Path.Combine(Environment.CurrentDirectory, "OxyUtils.exe");
-                //shortcut.IconLocation = Path.Combine(Environment.CurrentDirectory, "icon.ico");
                 shortcut.Save();
             }
             else
@@ -188,6 +192,11 @@ namespace OxyUtils
         private void btn_origin_Click(object sender, RoutedEventArgs e)
         {
             ForceBindIP(@"D:\Program Files (x86)\Origin\Origin.exe");
+        }
+
+        private void btn_mega_Click(object sender, RoutedEventArgs e)
+        {
+            ForceBindIP(@"C:\Users\Tom SUBLET\AppData\Local\MEGAsync\MEGAsync.exe");
         }
 
         private void btn_zoom_Click(object sender, RoutedEventArgs e)
