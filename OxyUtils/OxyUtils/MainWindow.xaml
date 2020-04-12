@@ -5,26 +5,41 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:OxyUtils"
         mc:Ignorable="d" d:DesignWidth="250"
-        Title="OxyUtils" SizeToContent="Height" Width="258" MinWidth="258" MaxWidth="258"
+        Title="OxyUtils" SizeToContent="Height" Width="265"
         Closing="Window_Closing" ResizeMode="CanMinimize">
-    <StackPanel Margin="5">
-        <WrapPanel Margin="5">
-            <Button Name="btn_adb" Content="_Reload ADB" Click="btn_adb_Click" />
-        </WrapPanel>
-        <GroupBox Header="ForceBindIP">
-            <StackPanel>
-                <ComboBox Name="cb_network" Margin="5" />
-                <WrapPanel>
-                    <Button Name="btn_eso" Content="ESO" Click="btn_eso_Click" />
-                    <Button Name="btn_steam" Content="Steam" Click="btn_steam_Click" />
-                    <Button Name="btn_origin" Content="Origin" Click="btn_origin_Click" />
-                    <Separator Width="210" Margin="5" />
-                    <Button Name="btn_zoom" Content="Zoom" Click="btn_zoom_Click" />
-                    <Button Name="btn_teams" Content="Teams" Click="btn_teams_Click" />
+    <TabControl>
+        <TabItem Header="Tools">
+            <StackPanel Margin="5">
+                <WrapPanel Margin="5">
+                    <Button Name="btn_adb" Content="_Reload ADB" Click="btn_adb_Click" />
                 </WrapPanel>
+                <GroupBox Header="ForceBindIP">
+                    <StackPanel>
+                        <ComboBox Name="cb_network" Margin="5" Grid.Column="0" />
+                        <WrapPanel>
+                            <Button Name="btn_eso" Content="ESO" Click="btn_eso_Click" />
+                            <Button Name="btn_steam" Content="Steam" Click="btn_steam_Click" />
+                            <Button Name="btn_origin" Content="Origin" Click="btn_origin_Click" />
+                            <Separator Width="210" Margin="5" />
+                            <Button Name="btn_zoom" Content="Zoom" Click="btn_zoom_Click" />
+                            <Button Name="btn_teams" Content="Teams" Click="btn_teams_Click" />
+                        </WrapPanel>
+                    </StackPanel>
+                </GroupBox>
             </StackPanel>
-        </GroupBox>
-        <CheckBox Name="cbx_startup" Content="Launch at Startup" Checked="cbx_startup_Checked" Unchecked="cbx_startup_Checked" Margin="5" />
-        <Label Name="lbl_version" Content="v0.0.0.0" HorizontalAlignment="Right" />
-    </StackPanel>
+        </TabItem>
+        <TabItem Header="Settings">
+            <StackPanel Margin="5">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+                    <CheckBox Name="cbx_startup" Content="Launch at Startup" Checked="cbx_startup_Checked" Unchecked="cbx_startup_Checked" Margin="5,10,5,5" Grid.Column="0" />
+                    <Button Name="btn_network" Content="Reload IPs" Click="btn_network_Click" Grid.Column="1" />
+                </Grid>
+                <Label Name="lbl_version" Content="v0.0.0.0" HorizontalAlignment="Right" />
+            </StackPanel>
+        </TabItem>
+    </TabControl>
 </Window>

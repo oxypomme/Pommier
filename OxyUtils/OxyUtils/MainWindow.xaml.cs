@@ -59,6 +59,12 @@ namespace OxyUtils
             notify.ContextMenu = cmNotify;
             notify.Click += NotifyMenu_ShowClick;
 
+            ReloadInterfaces();
+        }
+
+        private void ReloadInterfaces()
+        {
+            cb_network.Items.Clear();
             IPAddress add;
             // Enumerate IP addresses
             foreach (var interf in NetworkInterface.GetAllNetworkInterfaces())          // pour chaque les carte réseau
@@ -113,6 +119,11 @@ namespace OxyUtils
             }
             else
                 File.Delete(startupPath);
+        }
+
+        private void btn_network_Click(object sender, RoutedEventArgs e)
+        {
+            ReloadInterfaces();
         }
 
         private void ForceBindIP(string exe, bool is64bits)
