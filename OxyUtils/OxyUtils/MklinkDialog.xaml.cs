@@ -27,9 +27,7 @@ namespace OxyUtils
 
         private bool IsFile()
         {
-            if (tbx_source.Text.Length > 0 && tbx_target.Text.Length > 0
-                && ((File.Exists(tbx_source.Text) && File.Exists(tbx_target.Text))
-                    || (!File.Exists(tbx_source.Text) && !File.Exists(tbx_target.Text))))
+            if (tbx_source.Text.Length > 0 && tbx_target.Text.Length > 0)
                 btn_validate.IsEnabled = true;
             else
                 btn_validate.IsEnabled = false;
@@ -81,6 +79,7 @@ namespace OxyUtils
             if (folderBrowser.ShowDialog() == WinForms.DialogResult.OK)
             {
                 var fileBrowser = new WinForms.OpenFileDialog();
+                fileBrowser.CheckFileExists = false;
                 fileBrowser.InitialDirectory = folderBrowser.SelectedPath;
                 if (fileBrowser.ShowDialog() == WinForms.DialogResult.OK)
                 {
