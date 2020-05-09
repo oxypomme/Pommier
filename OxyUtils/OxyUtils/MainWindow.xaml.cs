@@ -219,6 +219,9 @@ namespace OxyUtils
 
         private void btn_mklink_Click(object sender, RoutedEventArgs e)
         {
+            var mklinkDialog = new MklinkDialog();
+            mklinkDialog.Owner = Application.Current.MainWindow;
+            mklinkDialog.ShowDialog();
         }
     }
 }
