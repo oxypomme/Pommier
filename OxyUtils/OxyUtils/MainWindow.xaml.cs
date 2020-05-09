@@ -31,6 +31,7 @@ namespace OxyUtils
         public Forms.NotifyIcon notify = new Forms.NotifyIcon();
 
         private string startupPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "OxyUtils.lnk");
+        private bool isNotifShownup = false;
 
         public MainWindow()
         {
@@ -95,7 +96,9 @@ namespace OxyUtils
         private void Window_Closing(object sender, CancelEventArgs e)
         {
             notify.Visible = true;
-            notify.ShowBalloonTip(5000, "OxyUtils is now reduced !", "At least, it doesn't take many place...", Forms.ToolTipIcon.Info);
+            if (!isNotifShownup)
+                notify.ShowBalloonTip(5000, "OxyUtils is now reduced !", "At least, it doesn't take many place...", Forms.ToolTipIcon.Info);
+            isNotifShownup = true;
             WindowState = WindowState.Minimized;
             ShowInTaskbar = false;
             e.Cancel = true;
@@ -199,14 +202,23 @@ namespace OxyUtils
             ForceBindIP(@"C:\Users\Tom SUBLET\AppData\Local\MEGAsync\MEGAsync.exe");
         }
 
-        private void btn_zoom_Click(object sender, RoutedEventArgs e)
+        private void btn_skype_Click(object sender, RoutedEventArgs e)
         {
-            ForceBindIP(@"C:\Users\Tom SUBLET\AppData\Roaming\Zoom\bin\Zoom.exe");
+            ForceBindIP(@"C:\Program Files (x86)\Microsoft\Skype for Desktop\Skype.exe");
         }
 
         private void btn_teams_Click(object sender, RoutedEventArgs e)
         {
             ForceBindIP(@"C:\Users\Tom SUBLET\AppData\Local\Microsoft\Teams\Update.exe", "--processStart \"Teams.exe\"", true);
+        }
+
+        private void btn_bethe_Click(object sender, RoutedEventArgs e)
+        {
+            ForceBindIP(@"C:\Program Files (x86)\Bethesda.net Launcher\BethesdaNetUpdater.exe");
+        }
+
+        private void btn_mklink_Click(object sender, RoutedEventArgs e)
+        {
         }
     }
 }

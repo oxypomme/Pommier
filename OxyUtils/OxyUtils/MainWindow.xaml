@@ -12,6 +12,7 @@
             <StackPanel Margin="5">
                 <WrapPanel Margin="5">
                     <Button Name="btn_adb" Content="_Reload ADB" Click="btn_adb_Click" />
+                    <Button Name="btn_mklink" Content="_Mklink" Click="btn_mklink_Click" />
                 </WrapPanel>
                 <GroupBox Header="ForceBindIP">
                     <StackPanel>
@@ -23,7 +24,7 @@
                             <Separator Width="210" Margin="5" />
                             <Button Name="btn_mega" Content="MEGA" Click="btn_mega_Click" />
                             <Separator Width="210" Margin="5" />
-                            <Button Name="btn_zoom" Content="Zoom" Click="btn_zoom_Click" />
+                            <Button Name="btn_skype" Content="Skype" Click="btn_skype_Click" />
                             <Button Name="btn_teams" Content="Teams" Click="btn_teams_Click" />
                         </WrapPanel>
                     </StackPanel>
