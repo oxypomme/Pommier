@@ -20,6 +20,8 @@ using System.IO;
 using System.Security.Principal;
 using System.ComponentModel;
 using System.Reflection;
+using System.Globalization;
+using System.Windows.Threading;
 
 namespace OxyUtils
 {
@@ -36,6 +38,30 @@ namespace OxyUtils
         public MainWindow()
         {
             InitializeComponent();
+
+            cbx_adb.IsChecked = Properties.Settings.Default.ADBonStart;
+            cbx_shutdown.IsChecked = Properties.Settings.Default.Shutdown;
+            tbx_time.Text = Properties.Settings.Default.ShutdownTime.TimeOfDay.ToString();
+
+            if (Properties.Settings.Default.ADBonStart)
+            {
+                Commander.RegisterNewCommand("\"" + @"C:\Program Files (x86)\Minimal ADB and Fastboot\adb.exe" + "\" reverse tcp:8500 tcp:8500");
+                Commander.RunCommands();
+            }
+
+            if (Properties.Settings.Default.Shutdown)
+                tbx_time.IsEnabled = true;
+
+            cbx_adb.Checked += cbx_adb_Checked;
+            cbx_adb.Unchecked += cbx_adb_Unchecked;
+            cbx_shutdown.Checked += cbx_shutdown_Checked;
+            cbx_shutdown.Unchecked += cbx_shutdown_Unchecked;
+            tbx_time.TextChanged += tbx_time_TextChanged;
+
+            var timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(10);
+            timer.Tick += timer_Tick;
+            timer.Start();
 
             if (File.Exists(startupPath))
                 cbx_startup.IsChecked = true;
@@ -66,6 +92,15 @@ namespace OxyUtils
             notify.Click += NotifyMenu_ShowClick;
 
             ReloadInterfaces();
+        }
+
+        private void timer_Tick(object sender, EventArgs e)
+        {
+            if (DateTime.Now.TimeOfDay >= Properties.Settings.Default.ShutdownTime.TimeOfDay && Properties.Settings.Default.Shutdown)
+            {
+                Commander.RegisterNewCommand("shutdown -s -f -t 30");
+                Commander.RunCommands();
+            }
         }
 
         private void ReloadInterfaces()
@@ -136,6 +171,48 @@ namespace OxyUtils
             ReloadInterfaces();
         }
 
+        private void cbx_adb_Checked(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.ADBonStart = true;
+            Properties.Settings.Default.Save();
+        }
+
+        private void cbx_adb_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.ADBonStart = false;
+            Properties.Settings.Default.Save();
+        }
+
+        private void cbx_shutdown_Checked(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.Shutdown = true;
+            Properties.Settings.Default.ShutdownTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, int.Parse(tbx_time.Text.Split(':')[0]), int.Parse(tbx_time.Text.Split(':')[1]), 0);
+            Properties.Settings.Default.Save();
+            tbx_time.IsEnabled = true;
+        }
+
+        private void cbx_shutdown_Unchecked(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.Shutdown = false;
+            Properties.Settings.Default.Save();
+            tbx_time.IsEnabled = false;
+        }
+
+        private void tbx_time_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            Properties.Settings.Default.Shutdown = cbx_shutdown.IsEnabled;
+            try
+            {
+                Properties.Settings.Default.ShutdownTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, int.Parse(tbx_time.Text.Split(':')[0]), int.Parse(tbx_time.Text.Split(':')[1]), 0);
+            }
+            catch (FormatException)
+            {
+                Console.WriteLine("Error when saving date time");
+                return;
+            }
+            Properties.Settings.Default.Save();
+        }
+
         private void ForceBindIP(string exe, bool is64bits)
         {
             ForceBindIP(exe, "", is64bits);
@@ -182,6 +259,13 @@ namespace OxyUtils
             Commander.RunCommands();
         }
 
+        private void btn_mklink_Click(object sender, RoutedEventArgs e)
+        {
+            var mklinkDialog = new MklinkDialog();
+            mklinkDialog.Owner = Application.Current.MainWindow;
+            mklinkDialog.ShowDialog();
+        }
+
         private void btn_eso_Click(object sender, RoutedEventArgs e)
         {
             ForceBindIP(@"D:\Program Files (x86)\Zenimax Online\Launcher\Bethesda.net_Launcher.exe");
@@ -215,13 +299,6 @@ namespace OxyUtils
         private void btn_bethe_Click(object sender, RoutedEventArgs e)
         {
             ForceBindIP(@"C:\Program Files (x86)\Bethesda.net Launcher\BethesdaNetUpdater.exe");
-        }
-
-        private void btn_mklink_Click(object sender, RoutedEventArgs e)
-        {
-            var mklinkDialog = new MklinkDialog();
-            mklinkDialog.Owner = Application.Current.MainWindow;
-            mklinkDialog.ShowDialog();
         }
     }
 }
