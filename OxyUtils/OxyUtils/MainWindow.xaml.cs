@@ -39,17 +39,16 @@ namespace OxyUtils
         {
             InitializeComponent();
 
-            cbx_adb.IsChecked = Properties.Settings.Default.ADBonStart;
-            cbx_shutdown.IsChecked = Properties.Settings.Default.Shutdown;
-            tbx_time.Text = Properties.Settings.Default.ShutdownTime.TimeOfDay.ToString();
+            App.settings = Properties.Settings.Default;
 
-            if (Properties.Settings.Default.ADBonStart)
-            {
-                Commander.RegisterNewCommand("\"" + @"C:\Program Files (x86)\Minimal ADB and Fastboot\adb.exe" + "\" reverse tcp:8500 tcp:8500");
-                Commander.RunCommands();
-            }
+            cbx_adb.IsChecked = App.settings.ADBonStart;
+            cbx_shutdown.IsChecked = App.settings.Shutdown;
+            tbx_time.Text = App.settings.ShutdownTime.TimeOfDay.ToString();
 
-            if (Properties.Settings.Default.Shutdown)
+            if (App.settings.ADBonStart)
+                App.ReloadADB();
+
+            if (App.settings.Shutdown)
                 tbx_time.IsEnabled = true;
 
             cbx_adb.Checked += cbx_adb_Checked;
@@ -66,7 +65,7 @@ namespace OxyUtils
             if (File.Exists(startupPath))
                 cbx_startup.IsChecked = true;
 
-            lbl_version.Content = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            lbl_version.Content = Assembly.GetExecutingAssembly().GetName().Version;
 
             var cmNotify = new Forms.ContextMenu();
             {
@@ -91,16 +90,39 @@ namespace OxyUtils
             notify.ContextMenu = cmNotify;
             notify.Click += NotifyMenu_ShowClick;
 
+            ReloadApps();
+
             ReloadInterfaces();
         }
 
+        private void ReloadApps()
+        {
+            wp_fbi.Children.Clear();
+            foreach (var app in App.Applications)
+            {
+                var btn = new Button()
+                {
+                    Content = app
+                };
+                btn.Click += App_Click;
+                btn.MouseRightButtonDown += AppDelete_Click;
+                wp_fbi.Children.Add(btn);
+            }
+        }
+
+        private void AppDelete_Click(object sender, MouseButtonEventArgs e)
+        {
+            App.Applications.Remove((Applet)(((Button)sender).Content));
+            JSONSerializer.SerializeJSON("apps.json", App.Applications);
+            ReloadApps();
+        }
+
+        private void App_Click(object sender, RoutedEventArgs e) => App.ForceBindIP((Applet)(((Button)sender).Content), (cb_network.SelectedItem as ComboBoxItem).Tag.ToString());
+
         private void timer_Tick(object sender, EventArgs e)
         {
-            if (DateTime.Now.TimeOfDay >= Properties.Settings.Default.ShutdownTime.TimeOfDay && Properties.Settings.Default.Shutdown)
-            {
-                Commander.RegisterNewCommand("shutdown -s -f -t 30");
-                Commander.RunCommands();
-            }
+            if (DateTime.Now.TimeOfDay >= App.settings.ShutdownTime.TimeOfDay && App.settings.Shutdown)
+                App.ShutdownPC();
         }
 
         private void ReloadInterfaces()
@@ -146,10 +168,7 @@ namespace OxyUtils
             ShowInTaskbar = true;
         }
 
-        private void NotifyMenu_QuitClick(object sender, EventArgs e)
-        {
-            Environment.Exit(1);
-        }
+        private void NotifyMenu_QuitClick(object sender, EventArgs e) => Environment.Exit(1);
 
         private void cbx_startup_Checked(object sender, RoutedEventArgs e)
         {
@@ -166,98 +185,51 @@ namespace OxyUtils
                 File.Delete(startupPath);
         }
 
-        private void cb_network_DropDownOpened(object sender, EventArgs e)
-        {
-            ReloadInterfaces();
-        }
+        private void cb_network_DropDownOpened(object sender, EventArgs e) => ReloadInterfaces();
 
         private void cbx_adb_Checked(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.ADBonStart = true;
-            Properties.Settings.Default.Save();
+            App.settings.ADBonStart = true;
+            App.settings.Save();
         }
 
         private void cbx_adb_Unchecked(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.ADBonStart = false;
-            Properties.Settings.Default.Save();
+            App.settings.ADBonStart = false;
+            App.settings.Save();
         }
 
         private void cbx_shutdown_Checked(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.Shutdown = true;
-            Properties.Settings.Default.ShutdownTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, int.Parse(tbx_time.Text.Split(':')[0]), int.Parse(tbx_time.Text.Split(':')[1]), 0);
-            Properties.Settings.Default.Save();
+            App.settings.Shutdown = true;
+            App.settings.ShutdownTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, int.Parse(tbx_time.Text.Split(':')[0]), int.Parse(tbx_time.Text.Split(':')[1]), 0);
+            App.settings.Save();
             tbx_time.IsEnabled = true;
         }
 
         private void cbx_shutdown_Unchecked(object sender, RoutedEventArgs e)
         {
-            Properties.Settings.Default.Shutdown = false;
-            Properties.Settings.Default.Save();
+            App.settings.Shutdown = false;
+            App.settings.Save();
             tbx_time.IsEnabled = false;
         }
 
         private void tbx_time_TextChanged(object sender, TextChangedEventArgs e)
         {
-            Properties.Settings.Default.Shutdown = cbx_shutdown.IsEnabled;
+            App.settings.Shutdown = cbx_shutdown.IsEnabled;
             try
             {
-                Properties.Settings.Default.ShutdownTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, int.Parse(tbx_time.Text.Split(':')[0]), int.Parse(tbx_time.Text.Split(':')[1]), 0);
+                App.settings.ShutdownTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, int.Parse(tbx_time.Text.Split(':')[0]), int.Parse(tbx_time.Text.Split(':')[1]), 0);
             }
             catch (FormatException)
             {
                 Console.WriteLine("Error when saving date time");
                 return;
             }
-            Properties.Settings.Default.Save();
+            App.settings.Save();
         }
 
-        private void ForceBindIP(string exe, bool is64bits)
-        {
-            ForceBindIP(exe, "", is64bits);
-        }
-
-        private void ForceBindIP(string exe, string arguments = "", bool is64bits = false)
-        {
-            // Si le programme n'est pas sur le C:, on change de disque
-            if (exe[0] != 'C')
-                Commander.RegisterNewCommand(exe[0] + ":");
-
-            // On atteint le répertoire du logiciel à ouvrir
-            Commander.RegisterNewCommand("cd \"" + Path.GetDirectoryName(exe) + "\"");
-
-            var command = new StringBuilder();
-            // On prépare ForceBindIP (64 si nécessaire)
-            command.Append("\"" + @"C:\Program Files (x86)\ForceBindIP\ForceBindIP");
-            if (is64bits)
-                command.Append("64");
-            command.Append(".exe\" ");
-
-            // On récupère l'ip à utiliser
-            try
-            {
-                command.Append((cb_network.SelectedItem as ComboBoxItem).Tag);
-            }
-            catch (NullReferenceException)
-            {
-                MessageBox.Show("Select an IP to bind !", "OxyUtils", MessageBoxButton.OK, MessageBoxImage.Error);
-                Commander.ClearCommands();
-                return;
-            }
-            // On génère la commande
-            command.AppendFormat(" \"{0}\"{1}", exe, (arguments != "" ? " " + arguments : ""));
-
-            // Qu'on enregistre et qu'on exécute
-            Commander.RegisterNewCommand(command.ToString());
-            Commander.RunCommands();
-        }
-
-        private void btn_adb_Click(object sender, RoutedEventArgs e)
-        {
-            Commander.RegisterNewCommand("\"" + @"C:\Program Files (x86)\Minimal ADB and Fastboot\adb.exe" + "\" reverse tcp:8500 tcp:8500");
-            Commander.RunCommands();
-        }
+        private void btn_adb_Click(object sender, RoutedEventArgs e) => App.ReloadADB();
 
         private void btn_mklink_Click(object sender, RoutedEventArgs e)
         {
@@ -266,39 +238,14 @@ namespace OxyUtils
             mklinkDialog.ShowDialog();
         }
 
-        private void btn_eso_Click(object sender, RoutedEventArgs e)
+        private void NewApp_Click(object sender, RoutedEventArgs e)
         {
-            ForceBindIP(@"D:\Program Files (x86)\Zenimax Online\Launcher\Bethesda.net_Launcher.exe");
-        }
-
-        private void btn_steam_Click(object sender, RoutedEventArgs e)
-        {
-            ForceBindIP(@"D:\Program Files (x86)\Steam\steam.exe");
-        }
-
-        private void btn_origin_Click(object sender, RoutedEventArgs e)
-        {
-            ForceBindIP(@"D:\Program Files (x86)\Origin\Origin.exe");
-        }
-
-        private void btn_mega_Click(object sender, RoutedEventArgs e)
-        {
-            ForceBindIP(@"C:\Users\Tom SUBLET\AppData\Local\MEGAsync\MEGAsync.exe");
-        }
-
-        private void btn_skype_Click(object sender, RoutedEventArgs e)
-        {
-            ForceBindIP(@"C:\Program Files (x86)\Microsoft\Skype for Desktop\Skype.exe");
-        }
-
-        private void btn_teams_Click(object sender, RoutedEventArgs e)
-        {
-            ForceBindIP(@"C:\Users\Tom SUBLET\AppData\Local\Microsoft\Teams\Update.exe", "--processStart \"Teams.exe\"", true);
-        }
-
-        private void btn_bethe_Click(object sender, RoutedEventArgs e)
-        {
-            ForceBindIP(@"C:\Program Files (x86)\Bethesda.net Launcher\BethesdaNetUpdater.exe");
+            var newAppDialog = new NewAppDialog();
+            newAppDialog.Owner = Application.Current.MainWindow;
+            newAppDialog.ShowDialog();
+            App.Applications.Add(newAppDialog.createdApp);
+            JSONSerializer.SerializeJSON("apps.json", App.Applications);
+            ReloadApps();
         }
     }
 }

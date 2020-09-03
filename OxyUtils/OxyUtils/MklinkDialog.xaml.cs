@@ -111,14 +111,12 @@ namespace OxyUtils
 
             sb.Append($" \"{tbx_target.Text}\" \"{tbx_source.Text}\"");
 
-            Commander.RegisterNewCommand(sb.ToString());
-            Commander.RunCommands();
+            var cmder = new Commander();
+            cmder.RegisterNewCommand(sb.ToString());
+            cmder.RunCommands();
             Close();
         }
 
-        private void btn_cancel_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
+        private void btn_cancel_Click(object sender, RoutedEventArgs e) => Close();
     }
 }

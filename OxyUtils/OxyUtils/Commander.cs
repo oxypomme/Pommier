@@ -7,12 +7,17 @@ using System.Threading.Tasks;
 
 namespace OxyUtils
 {
-    internal static class Commander
+    internal class Commander
     {
-        private static ProcessStartInfo info = new ProcessStartInfo("cmd.exe");
-        private static Process process;
+        private ProcessStartInfo info;
+        private Process process;
 
-        public static void RegisterNewCommand(string command)
+        public Commander()
+        {
+            info = new ProcessStartInfo("cmd.exe");
+        }
+
+        public void RegisterNewCommand(string command)
         {
             if (info.Arguments == "")  // si c'est la première commande
                 info.Arguments += "/k " + command + " ";
@@ -21,7 +26,7 @@ namespace OxyUtils
             Console.WriteLine("New command : " + command);
         }
 
-        public static void ClearCommands()
+        public void ClearCommands()
         {
             info.Arguments = "";
             if (!string.IsNullOrEmpty(info.Verb))
@@ -29,7 +34,7 @@ namespace OxyUtils
             Console.WriteLine("Commands cleared !");
         }
 
-        public static void RunCommands()
+        public void RunCommands()
         {
             Console.WriteLine("Commands starting...");
             process = Process.Start(info);
@@ -43,7 +48,7 @@ namespace OxyUtils
             ClearCommands();
         }
 
-        public static void InitAdminRights()
+        public void InitAdminRights()
         {
             info.Verb = "runas";
             Console.WriteLine("Admin rights needed !");
