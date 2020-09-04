@@ -32,9 +32,6 @@ namespace OxyUtils
             calendar = new GoogleCalendarController();
 
             rpc = new DiscordRPCClient();
-            rpc.SetEmptyPresence();
-            if (calendar.NextEvents.Items[0].Start.DateTime <= DateTime.Now)
-                rpc.SetEventAsPresence(calendar.NextEvents.Items[0]);
 
             if (File.Exists(appsPath))
                 Applications = JSONSerializer.DeserializeJSON<MyAppletList>(appsPath);

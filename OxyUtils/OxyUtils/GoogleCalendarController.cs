@@ -41,8 +41,6 @@ namespace OxyUtils
                     new FileDataStore(credPath, true)).Result;
                 Console.WriteLine("Credential file saved to: " + credPath);
             }
-
-            RequestEvents();
         }
 
         internal void RequestEvents()
@@ -57,10 +55,10 @@ namespace OxyUtils
             // Define parameters of request.
             EventsResource.ListRequest request = service.Events.List("primary");
             request.TimeMin = DateTime.Now;
-            request.TimeMax = DateTime.Now.AddDays(1);
+            request.TimeMax = DateTime.Now.AddHours(3);
             request.ShowDeleted = false;
             request.SingleEvents = true;
-            request.MaxResults = 1;
+            request.MaxResults = 2;
             request.OrderBy = EventsResource.ListRequest.OrderByEnum.StartTime;
 
             // List events.

@@ -32,6 +32,11 @@ namespace OxyUtils
 
             //Connect to the RPC
             client.Initialize();
+
+            client.SetPresence(new RichPresence()
+            {
+                Details = "entrain de récupérer ses données"
+            });
         }
 
         public void Close() => client.Dispose();
@@ -42,15 +47,10 @@ namespace OxyUtils
             client.SetPresence(new RichPresence()
             {
                 Details = "en " + evnt.Summary,
-                State = (evnt.Location == "Distance" ? "depuis sur son PC" : "en " + evnt.Location),
+                State = "depuis " + (evnt.Location == "Distance" ? "son PC" : "la " + evnt.Location),
                 Timestamps = new Timestamps()
                 {
-                    //Start = evnt.Start.DateTime.Value.ToUniversalTime(),
                     End = evnt.End.DateTime.Value.ToUniversalTime()
-                },
-                Assets = new Assets()
-                {
-                    LargeImageKey = "rpccover"
                 }
             });
 
@@ -58,20 +58,17 @@ namespace OxyUtils
         {
             var presence = new RichPresence()
             {
-                Details = "libre de ses mouvements.",
-                Assets = new Assets()
-                {
-                    LargeImageKey = "rpccover"
-                }
+                Details = "libre de ses mouvements."
             };
-            if (App.calendar.NextEvents.Items.Count > 0)
+            if (App.calendar.NextEvents != null && App.calendar.NextEvents.Items.Count >= 1)
             {
-                presence.State = $"Prochain cours : " + App.calendar.NextEvents.Items[0].Summary;
+                presence.State = $"Prochain cours : " + App.calendar.NextEvents.Items[0].Summary + $" ({(App.calendar.NextEvents.Items[0].End.DateTime.Value - App.calendar.NextEvents.Items[0].Start.DateTime.Value).ToString(@"h\hmm")})";
                 presence.Timestamps = new Timestamps()
                 {
                     End = App.calendar.NextEvents.Items[0].Start.DateTime.Value.ToUniversalTime()
                 };
             }
+
             client.SetPresence(presence);
         }
     }

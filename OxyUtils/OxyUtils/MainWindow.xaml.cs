@@ -135,8 +135,15 @@ namespace OxyUtils
             if (DateTime.Now.TimeOfDay >= App.settings.ShutdownTime.TimeOfDay && App.settings.Shutdown)
                 App.ShutdownPC();
 
-            if (App.calendar.NextEvents.Items[0].Start.DateTime <= DateTime.Now)
+            if (App.calendar.NextEvents == null || App.calendar.NextEvents.Items.Count < 1)
+                App.calendar.RequestEvents();
+
+            if (App.calendar.NextEvents.Items.Count >= 1 && App.calendar.NextEvents.Items[0].Start.DateTime <= DateTime.Now)
+            {
                 App.rpc.SetEventAsPresence(App.calendar.NextEvents.Items[0]);
+                if (App.calendar.NextEvents.Items[0].End.DateTime <= DateTime.Now)
+                    App.calendar.NextEvents.Items.RemoveAt(0);
+            }
             else
                 App.rpc.SetEmptyPresence();
         }
