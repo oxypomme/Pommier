@@ -352,3 +352,4 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 /OxyUtils/OxyUtils/app.manifest
+/OxyUtils/OxyUtils/credentials.json

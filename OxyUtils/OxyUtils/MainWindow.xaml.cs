@@ -58,7 +58,7 @@ namespace OxyUtils
             tbx_time.TextChanged += tbx_time_TextChanged;
 
             var timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(10);
+            timer.Interval = TimeSpan.FromSeconds(30);
             timer.Tick += timer_Tick;
             timer.Start();
 
@@ -134,6 +134,11 @@ namespace OxyUtils
         {
             if (DateTime.Now.TimeOfDay >= App.settings.ShutdownTime.TimeOfDay && App.settings.Shutdown)
                 App.ShutdownPC();
+
+            if (App.calendar.NextEvents.Items[0].Start.DateTime <= DateTime.Now)
+                App.rpc.SetEventAsPresence(App.calendar.NextEvents.Items[0]);
+            else
+                App.rpc.SetEmptyPresence();
         }
 
         private void ReloadInterfaces()
@@ -177,7 +182,11 @@ namespace OxyUtils
             ShowInTaskbar = true;
         }
 
-        private void NotifyMenu_QuitClick(object sender, EventArgs e) => Environment.Exit(1);
+        private void NotifyMenu_QuitClick(object sender, EventArgs e)
+        {
+            App.rpc.Close();
+            Environment.Exit(1);
+        }
 
         private void cbx_startup_Checked(object sender, RoutedEventArgs e)
         {

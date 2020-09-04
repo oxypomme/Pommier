@@ -23,9 +23,18 @@ namespace OxyUtils
 
         internal static readonly string appsPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "apps.json");
 
+        internal static DiscordRPCClient rpc;
+        internal static GoogleCalendarController calendar;
+
         public App()
         {
             cmder = new Commander();
+            calendar = new GoogleCalendarController();
+
+            rpc = new DiscordRPCClient();
+            rpc.SetEmptyPresence();
+            if (calendar.NextEvents.Items[0].Start.DateTime <= DateTime.Now)
+                rpc.SetEventAsPresence(calendar.NextEvents.Items[0]);
 
             if (File.Exists(appsPath))
                 Applications = JSONSerializer.DeserializeJSON<MyAppletList>(appsPath);
