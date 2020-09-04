@@ -11,5 +11,8 @@
     <Setting Name="ShutdownTime" Type="System.DateTime" Scope="User">
       <Value Profile="(Default)">05/10/2020 20:00:00</Value>
     </Setting>
+    <Setting Name="DiscordRPC" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

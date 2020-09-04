@@ -58,5 +58,17 @@ namespace OxyUtils.Properties {
                 this["ShutdownTime"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool DiscordRPC {
+            get {
+                return ((bool)(this["DiscordRPC"]));
+            }
+            set {
+                this["DiscordRPC"] = value;
+            }
+        }
     }
 }

@@ -14,6 +14,8 @@ namespace OxyUtils
     {
         private DiscordRpcClient client = new DiscordRpcClient("444443402822746112", 0);
 
+        public string customStatus = "libre de ses mouvements.";
+
         public DiscordRPCClient()
         {
             /*
@@ -32,11 +34,6 @@ namespace OxyUtils
 
             //Connect to the RPC
             client.Initialize();
-
-            client.SetPresence(new RichPresence()
-            {
-                Details = "entrain de récupérer ses données"
-            });
         }
 
         public void Close() => client.Dispose();
@@ -58,7 +55,7 @@ namespace OxyUtils
         {
             var presence = new RichPresence()
             {
-                Details = "libre de ses mouvements."
+                Details = customStatus
             };
             if (App.calendar.NextEvents != null && App.calendar.NextEvents.Items.Count >= 1)
             {
@@ -71,5 +68,13 @@ namespace OxyUtils
 
             client.SetPresence(presence);
         }
+
+        public void SetLoadingPresence() =>
+            client.SetPresence(new RichPresence()
+            {
+                Details = "entrain de récupérer ses données"
+            });
+
+        public void ResetPresence() => client.ClearPresence();
     }
 }

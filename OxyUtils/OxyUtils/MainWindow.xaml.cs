@@ -44,6 +44,8 @@ namespace OxyUtils
             cbx_adb.IsChecked = App.settings.ADBonStart;
             cbx_shutdown.IsChecked = App.settings.Shutdown;
             tbx_time.Text = App.settings.ShutdownTime.TimeOfDay.ToString();
+            cbx_discord.IsChecked = App.settings.DiscordRPC;
+            tbx_discord.Text = App.rpc.customStatus;
 
             if (App.settings.ADBonStart)
                 App.ReloadADB();
@@ -56,9 +58,16 @@ namespace OxyUtils
             cbx_shutdown.Checked += cbx_shutdown_Checked;
             cbx_shutdown.Unchecked += cbx_shutdown_Unchecked;
             tbx_time.TextChanged += tbx_time_TextChanged;
+            cbx_discord.Checked += cbx_discord_Checked;
+            cbx_discord.Unchecked += cbx_discord_Unchecked;
+            tbx_discord.TextChanged += tbx_discord_TextChanged;
 
             var timer = new DispatcherTimer();
+#if DEBUG
+            timer.Interval = TimeSpan.FromSeconds(10);
+#else
             timer.Interval = TimeSpan.FromSeconds(30);
+#endif
             timer.Tick += timer_Tick;
             timer.Start();
 
@@ -94,6 +103,9 @@ namespace OxyUtils
             ReloadApps();
 
             ReloadInterfaces();
+
+            if (App.settings.DiscordRPC)
+                App.rpc.SetLoadingPresence();
         }
 
         private void ReloadApps()
@@ -138,14 +150,17 @@ namespace OxyUtils
             if (App.calendar.NextEvents == null || App.calendar.NextEvents.Items.Count < 1)
                 App.calendar.RequestEvents();
 
-            if (App.calendar.NextEvents.Items.Count >= 1 && App.calendar.NextEvents.Items[0].Start.DateTime <= DateTime.Now)
+            if (App.settings.DiscordRPC)
             {
-                App.rpc.SetEventAsPresence(App.calendar.NextEvents.Items[0]);
-                if (App.calendar.NextEvents.Items[0].End.DateTime <= DateTime.Now)
-                    App.calendar.NextEvents.Items.RemoveAt(0);
+                if (App.calendar.NextEvents.Items.Count >= 1 && App.calendar.NextEvents.Items[0].Start.DateTime <= DateTime.Now)
+                {
+                    App.rpc.SetEventAsPresence(App.calendar.NextEvents.Items[0]);
+                    if (App.calendar.NextEvents.Items[0].End.DateTime <= DateTime.Now)
+                        App.calendar.NextEvents.Items.RemoveAt(0);
+                }
+                else
+                    App.rpc.SetEmptyPresence();
             }
-            else
-                App.rpc.SetEmptyPresence();
         }
 
         private void ReloadInterfaces()
@@ -253,6 +268,24 @@ namespace OxyUtils
             }
             App.settings.Save();
         }
+
+        private void cbx_discord_Checked(object sender, RoutedEventArgs e)
+        {
+            App.settings.DiscordRPC = true;
+            App.settings.Save();
+            tbx_discord.IsEnabled = true;
+            App.rpc.SetLoadingPresence();
+        }
+
+        private void cbx_discord_Unchecked(object sender, RoutedEventArgs e)
+        {
+            App.settings.DiscordRPC = false;
+            App.settings.Save();
+            tbx_discord.IsEnabled = false;
+            App.rpc.ResetPresence();
+        }
+
+        private void tbx_discord_TextChanged(object sender, TextChangedEventArgs e) => App.rpc.customStatus = tbx_discord.Text;
 
         private void btn_adb_Click(object sender, RoutedEventArgs e) => App.ReloadADB();
 
