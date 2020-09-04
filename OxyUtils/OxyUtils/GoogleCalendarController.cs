@@ -28,11 +28,11 @@ namespace OxyUtils
         public GoogleCalendarController()
         {
             using (var stream =
-                new FileStream("credentials.json", FileMode.Open, FileAccess.Read))
+                new FileStream(Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "credentials.json"), FileMode.Open, FileAccess.Read))
             {
                 // The file token.json stores the user's access and refresh tokens, and is created
                 // automatically when the authorization flow completes for the first time.
-                string credPath = "token.json";
+                string credPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "token.json");
                 credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
                     GoogleClientSecrets.Load(stream).Secrets,
                     Scopes,
