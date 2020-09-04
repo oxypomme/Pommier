@@ -47,6 +47,10 @@ namespace OxyUtils
                 {
                     //Start = evnt.Start.DateTime.Value.ToUniversalTime(),
                     End = evnt.End.DateTime.Value.ToUniversalTime()
+                },
+                Assets = new Assets()
+                {
+                    LargeImageKey = "rpccover"
                 }
             });
 
@@ -54,7 +58,11 @@ namespace OxyUtils
         {
             var presence = new RichPresence()
             {
-                Details = "libre de ses mouvements."
+                Details = "libre de ses mouvements.",
+                Assets = new Assets()
+                {
+                    LargeImageKey = "rpccover"
+                }
             };
             if (App.calendar.NextEvents.Items.Count > 0)
             {
