@@ -89,6 +89,7 @@ namespace OxyUtils
             notify.Icon = System.Drawing.Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
             notify.ContextMenu = cmNotify;
             notify.Click += NotifyMenu_ShowClick;
+            notify.Visible = true;
 
             ReloadApps();
 
@@ -113,11 +114,21 @@ namespace OxyUtils
         private void AppDelete_Click(object sender, MouseButtonEventArgs e)
         {
             App.Applications.Remove((Applet)(((Button)sender).Content));
-            JSONSerializer.SerializeJSON("apps.json", App.Applications);
+            JSONSerializer.SerializeJSON(App.appsPath, App.Applications);
             ReloadApps();
         }
 
-        private void App_Click(object sender, RoutedEventArgs e) => App.ForceBindIP((Applet)(((Button)sender).Content), (cb_network.SelectedItem as ComboBoxItem).Tag.ToString());
+        private void App_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                App.ForceBindIP((Applet)(((Button)sender).Content), (cb_network.SelectedItem as ComboBoxItem).Tag.ToString());
+            }
+            catch (NullReferenceException)
+            {
+                MessageBox.Show("Select an IP to bind !", "OxyUtils", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
 
         private void timer_Tick(object sender, EventArgs e)
         {
@@ -152,7 +163,6 @@ namespace OxyUtils
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
-            notify.Visible = true;
             if (!isNotifShownup)
                 notify.ShowBalloonTip(5000, "OxyUtils is now reduced !", "At least, it doesn't take many place...", Forms.ToolTipIcon.Info);
             isNotifShownup = true;
@@ -163,7 +173,6 @@ namespace OxyUtils
 
         private void NotifyMenu_ShowClick(object sender, EventArgs e)
         {
-            notify.Visible = false;
             WindowState = WindowState.Normal;
             ShowInTaskbar = true;
         }
@@ -243,9 +252,12 @@ namespace OxyUtils
             var newAppDialog = new NewAppDialog();
             newAppDialog.Owner = Application.Current.MainWindow;
             newAppDialog.ShowDialog();
-            App.Applications.Add(newAppDialog.createdApp);
-            JSONSerializer.SerializeJSON("apps.json", App.Applications);
-            ReloadApps();
+            if (newAppDialog.createdApp != null)
+            {
+                App.Applications.Add(newAppDialog.createdApp);
+                JSONSerializer.SerializeJSON(App.appsPath, App.Applications);
+                ReloadApps();
+            }
         }
     }
 }

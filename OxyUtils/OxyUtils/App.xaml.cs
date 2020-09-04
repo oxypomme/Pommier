@@ -21,24 +21,24 @@ namespace OxyUtils
 
         internal static MyAppletList Applications;
 
+        internal static readonly string appsPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "apps.json");
+
         public App()
         {
             cmder = new Commander();
 
-            if (File.Exists("apps.json"))
-                Applications = JSONSerializer.DeserializeJSON<MyAppletList>("apps.json");
+            if (File.Exists(appsPath))
+                Applications = JSONSerializer.DeserializeJSON<MyAppletList>(appsPath);
             else
             {
                 Applications = new MyAppletList();
-                JSONSerializer.SerializeJSON("apps.json", Applications);
+                JSONSerializer.SerializeJSON(appsPath, Applications);
             }
         }
 
-        public static void ForceBindIP(Applet app, string ip, string arguments = "", bool is64bits = false)
+        public static void ForceBindIP(Applet app, string ip)
         {
-            if (string.IsNullOrEmpty(ip))
-                return;
-
+            cmder.ClearCommands();
             // Si le programme n'est pas sur le C:, on change de disque
             if (app.AppExe[0] != 'C')
                 cmder.RegisterNewCommand(app.AppExe[0] + ":");
@@ -49,26 +49,19 @@ namespace OxyUtils
             var command = new StringBuilder();
             // On prépare ForceBindIP (64 si nécessaire)
             command.Append("\"" + @"C:\Program Files (x86)\ForceBindIP\ForceBindIP");
-            if (is64bits)
+            if (app.Is64Bits)
                 command.Append("64");
             command.Append(".exe\" ");
 
             // On récupère l'ip à utiliser
-            try
-            {
-                command.Append(ip);
-            }
-            catch (NullReferenceException)
-            {
-                MessageBox.Show("Select an IP to bind !", "OxyUtils", MessageBoxButton.OK, MessageBoxImage.Error);
-                cmder.ClearCommands();
-                return;
-            }
+            command.Append(ip);
+
             // On génère la commande
-            command.AppendFormat(" \"{0}\"{1}", app.AppExe, (arguments != "" ? " " + arguments : ""));
+            command.AppendFormat(" \"{0}\"{1}", app.AppExe, (app.Arguments != "" ? " " + app.Arguments : ""));
 
             // Qu'on enregistre et qu'on exécute
             cmder.RegisterNewCommand(command.ToString());
+            Console.WriteLine(command.ToString());
             cmder.RunCommands();
         }
 

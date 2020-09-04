@@ -29,7 +29,8 @@ namespace OxyUtils
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
-            createdApp = new Applet(tbx_name.Text, tbx_path.Text, tbx_args.Text, cbx_bits.IsChecked.Value);
+            if (!string.IsNullOrEmpty(tbx_name.Text) && !string.IsNullOrEmpty(tbx_path.Text) && cbx_bits.IsChecked.HasValue)
+                createdApp = new Applet(tbx_name.Text, tbx_path.Text, tbx_args.Text, cbx_bits.IsChecked.Value);
             Close();
         }
 
