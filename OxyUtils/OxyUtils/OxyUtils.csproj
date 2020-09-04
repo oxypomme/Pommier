@@ -25,6 +25,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>8.0</LangVersion>
+    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -100,6 +101,7 @@
     <Compile Include="Applet.cs" />
     <Compile Include="Commander.cs" />
     <Compile Include="DiscordRPCClient.cs" />
+    <Compile Include="ScreenController.cs" />
     <Compile Include="GoogleCalendarController.cs" />
     <Compile Include="JSONSerializer.cs" />
     <Compile Include="MainWindow.xaml.cs">

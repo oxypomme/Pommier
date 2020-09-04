@@ -105,7 +105,10 @@ namespace OxyUtils
             ReloadInterfaces();
 
             if (App.settings.DiscordRPC)
+            {
                 App.rpc.SetLoadingPresence();
+                tbx_discord.IsEnabled = true;
+            }
         }
 
         private void ReloadApps()
@@ -147,11 +150,10 @@ namespace OxyUtils
             if (DateTime.Now.TimeOfDay >= App.settings.ShutdownTime.TimeOfDay && App.settings.Shutdown)
                 App.ShutdownPC();
 
-            if (App.calendar.NextEvents == null || App.calendar.NextEvents.Items.Count < 1)
-                App.calendar.RequestEvents();
-
             if (App.settings.DiscordRPC)
             {
+                if (App.calendar.NextEvents == null || App.calendar.NextEvents.Items.Count < 1)
+                    App.calendar.RequestEvents();
                 if (App.calendar.NextEvents.Items.Count >= 1 && App.calendar.NextEvents.Items[0].Start.DateTime <= DateTime.Now)
                 {
                     App.rpc.SetEventAsPresence(App.calendar.NextEvents.Items[0]);

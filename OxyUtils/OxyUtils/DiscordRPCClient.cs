@@ -55,7 +55,7 @@ namespace OxyUtils
         {
             var presence = new RichPresence()
             {
-                Details = customStatus
+                Details = (ScreenController.IsForegroundFullScreen() ? "entrain de jouer à " + ScreenController.GetForegroundName() : customStatus)
             };
             if (App.calendar.NextEvents != null && App.calendar.NextEvents.Items.Count >= 1)
             {
