@@ -50,15 +50,21 @@ namespace OxyUtils
                 }
             });
 
-        public void SetEmptyPresence() =>
-            client.SetPresence(new RichPresence()
+        public void SetEmptyPresence()
+        {
+            var presence = new RichPresence()
             {
-                Details = "libre de ses mouvements.",
-                State = $"Prochain cours : " + App.calendar.NextEvents.Items[0].Summary,
-                Timestamps = new Timestamps()
+                Details = "libre de ses mouvements."
+            };
+            if (App.calendar.NextEvents.Items.Count > 0)
+            {
+                presence.State = $"Prochain cours : " + App.calendar.NextEvents.Items[0].Summary;
+                presence.Timestamps = new Timestamps()
                 {
                     End = App.calendar.NextEvents.Items[0].Start.DateTime.Value.ToUniversalTime()
-                }
-            });
+                };
+            }
+            client.SetPresence(presence);
+        }
     }
 }
