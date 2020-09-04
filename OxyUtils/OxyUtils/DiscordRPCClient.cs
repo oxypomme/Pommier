@@ -12,7 +12,7 @@ namespace OxyUtils
 {
     internal class DiscordRPCClient
     {
-        private DiscordRpcClient client = new DiscordRpcClient("444443402822746112");
+        private DiscordRpcClient client = new DiscordRpcClient("444443402822746112", 0);
 
         public DiscordRPCClient()
         {
@@ -26,15 +26,9 @@ namespace OxyUtils
             client.Logger = new ConsoleLogger() { Level = LogLevel.Warning };
 
             //Subscribe to events
-            client.OnReady += (sender, e) =>
-            {
-                Console.WriteLine("Received Ready from user {0}", e.User.Username);
-            };
+            client.OnReady += (sender, e) => Console.WriteLine("Received Ready from user {0}", e.User.Username);
 
-            client.OnPresenceUpdate += (sender, e) =>
-            {
-                Console.WriteLine("Received Update! {0}", e.Presence);
-            };
+            client.OnPresenceUpdate += (sender, e) => Console.WriteLine("Received Update! {0}", e.Presence);
 
             //Connect to the RPC
             client.Initialize();
