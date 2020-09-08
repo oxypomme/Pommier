@@ -20,17 +20,21 @@ namespace OxyUtils
         internal static Properties.Settings settings;
 
         internal static MyAppletList Applications;
+        internal static Creditentials credits;
 
         internal static readonly string appsPath = Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "apps.json");
 
+        internal static SQLController database;
         internal static DiscordRPCClient rpc;
         internal static GoogleCalendarController calendar;
 
         public App()
         {
             cmder = new Commander();
-            calendar = new GoogleCalendarController();
+            credits = JSONSerializer.DeserializeJSON<Creditentials>(Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location), "credentials.json"));
 
+            database = new SQLController();
+            calendar = new GoogleCalendarController();
             rpc = new DiscordRPCClient();
 
             if (File.Exists(appsPath))

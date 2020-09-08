@@ -12,9 +12,9 @@ namespace OxyUtils
 {
     internal class DiscordRPCClient
     {
-        private DiscordRpcClient client = new DiscordRpcClient("444443402822746112", 0);
+        private DiscordRpcClient client = new DiscordRpcClient(App.credits.discord.ApplicationID, 0);
 
-        public string customStatus = "libre de ses mouvements.";
+        public string customStatus = "est libre de ses mouvements.";
 
         public DiscordRPCClient()
         {
@@ -55,7 +55,7 @@ namespace OxyUtils
         {
             var presence = new RichPresence()
             {
-                Details = (ScreenController.IsForegroundFullScreen() ? "entrain de jouer à " + ScreenController.GetForegroundName() : customStatus)
+                Details = (ScreenController.IsForegroundFullScreen() ? $"en train de jouer à {ScreenController.GetForegroundName()}." : customStatus)
             };
             if (App.calendar.NextEvents != null && App.calendar.NextEvents.Items.Count >= 1)
             {

@@ -36,7 +36,7 @@
                 </WrapPanel>
                 <WrapPanel>
                     <CheckBox Name="cbx_discord" Content="Discord msg :" Margin="5,5,0,0" />
-                    <TextBox Name="tbx_discord" Width="230" Margin="5" IsEnabled="False" />
+                    <TextBox Name="tbx_discord" Width="220" Margin="5" IsEnabled="False" />
                 </WrapPanel>
                 <Label Name="lbl_version" Content="v0.0.0.0" HorizontalAlignment="Right" />
             </StackPanel>

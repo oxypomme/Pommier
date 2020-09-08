@@ -34,6 +34,7 @@ namespace OxyUtils
 
         private string startupPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), "OxyUtils.lnk");
         private bool isNotifShownup = false;
+        private bool isRPCupdated = false;
 
         public MainWindow()
         {
@@ -41,11 +42,13 @@ namespace OxyUtils
 
             App.settings = Properties.Settings.Default;
 
+#if !DEBUG
             cbx_adb.IsChecked = App.settings.ADBonStart;
             cbx_shutdown.IsChecked = App.settings.Shutdown;
             tbx_time.Text = App.settings.ShutdownTime.TimeOfDay.ToString();
             cbx_discord.IsChecked = App.settings.DiscordRPC;
-            tbx_discord.Text = App.rpc.customStatus;
+#endif
+            tbx_discord.Text = "est libre de ses mouvements.";
 
             if (App.settings.ADBonStart)
                 App.ReloadADB();
@@ -107,7 +110,9 @@ namespace OxyUtils
             if (App.settings.DiscordRPC)
             {
                 App.rpc.SetLoadingPresence();
+                App.database.UpdateRPCStatus(App.rpc.customStatus);
                 tbx_discord.IsEnabled = true;
+                tbx_discord.Text = App.rpc.customStatus;
             }
         }
 
@@ -151,18 +156,31 @@ namespace OxyUtils
                 App.ShutdownPC();
 
             if (App.settings.DiscordRPC)
-            {
-                if (App.calendar.NextEvents == null || App.calendar.NextEvents.Items.Count < 1)
-                    App.calendar.RequestEvents();
-                if (App.calendar.NextEvents.Items.Count >= 1 && App.calendar.NextEvents.Items[0].Start.DateTime <= DateTime.Now)
+                App.rpc.customStatus = App.database.RequestRPCStatus();
+            if (tbx_discord.Text != App.rpc.customStatus)
+                if (!isRPCupdated)
                 {
-                    App.rpc.SetEventAsPresence(App.calendar.NextEvents.Items[0]);
-                    if (App.calendar.NextEvents.Items[0].End.DateTime <= DateTime.Now)
-                        App.calendar.NextEvents.Items.RemoveAt(0);
+                    tbx_discord.TextChanged -= tbx_discord_TextChanged;
+                    tbx_discord.Text = App.rpc.customStatus;
+                    tbx_discord.TextChanged += tbx_discord_TextChanged;
                 }
                 else
-                    App.rpc.SetEmptyPresence();
+                {
+                    App.rpc.customStatus = tbx_discord.Text;
+                    App.database.UpdateRPCStatus(App.rpc.customStatus);
+                    isRPCupdated = false;
+                }
+
+            if (App.calendar.NextEvents == null || App.calendar.NextEvents.Items.Count < 1)
+                App.calendar.RequestEvents();
+            if (App.calendar.NextEvents.Items.Count >= 1 && App.calendar.NextEvents.Items[0].Start.DateTime <= DateTime.Now)
+            {
+                App.rpc.SetEventAsPresence(App.calendar.NextEvents.Items[0]);
+                if (App.calendar.NextEvents.Items[0].End.DateTime <= DateTime.Now)
+                    App.calendar.NextEvents.Items.RemoveAt(0);
             }
+            else
+                App.rpc.SetEmptyPresence();
         }
 
         private void ReloadInterfaces()
@@ -232,27 +250,36 @@ namespace OxyUtils
         private void cbx_adb_Checked(object sender, RoutedEventArgs e)
         {
             App.settings.ADBonStart = true;
+#if !DEBUG
             App.settings.Save();
+#endif
         }
 
         private void cbx_adb_Unchecked(object sender, RoutedEventArgs e)
         {
             App.settings.ADBonStart = false;
+#if !DEBUG
             App.settings.Save();
+#endif
         }
 
         private void cbx_shutdown_Checked(object sender, RoutedEventArgs e)
         {
             App.settings.Shutdown = true;
             App.settings.ShutdownTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, int.Parse(tbx_time.Text.Split(':')[0]), int.Parse(tbx_time.Text.Split(':')[1]), 0);
+#if !DEBUG
             App.settings.Save();
+#endif
             tbx_time.IsEnabled = true;
         }
 
         private void cbx_shutdown_Unchecked(object sender, RoutedEventArgs e)
         {
             App.settings.Shutdown = false;
+#if !DEBUG
+
             App.settings.Save();
+#endif
             tbx_time.IsEnabled = false;
         }
 
@@ -268,13 +295,17 @@ namespace OxyUtils
                 Console.WriteLine("Error when saving date time");
                 return;
             }
+#if !DEBUG
             App.settings.Save();
+#endif
         }
 
         private void cbx_discord_Checked(object sender, RoutedEventArgs e)
         {
             App.settings.DiscordRPC = true;
+#if !DEBUG
             App.settings.Save();
+#endif
             tbx_discord.IsEnabled = true;
             App.rpc.SetLoadingPresence();
         }
@@ -282,12 +313,19 @@ namespace OxyUtils
         private void cbx_discord_Unchecked(object sender, RoutedEventArgs e)
         {
             App.settings.DiscordRPC = false;
+#if !DEBUG
+
             App.settings.Save();
+#endif
             tbx_discord.IsEnabled = false;
             App.rpc.ResetPresence();
         }
 
-        private void tbx_discord_TextChanged(object sender, TextChangedEventArgs e) => App.rpc.customStatus = tbx_discord.Text;
+        private void tbx_discord_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            App.rpc.customStatus = tbx_discord.Text;
+            isRPCupdated = true;
+        }
 
         private void btn_adb_Click(object sender, RoutedEventArgs e) => App.ReloadADB();
 
