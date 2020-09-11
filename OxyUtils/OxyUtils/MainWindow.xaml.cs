@@ -48,7 +48,7 @@ namespace OxyUtils
             tbx_time.Text = App.settings.ShutdownTime.TimeOfDay.ToString();
             cbx_discord.IsChecked = App.settings.DiscordRPC;
 #endif
-            tbx_discord.Text = "est libre de ses mouvements.";
+            tbx_discord.Text = "libre de ses mouvements.";
 
             if (App.settings.ADBonStart)
                 App.ReloadADB();

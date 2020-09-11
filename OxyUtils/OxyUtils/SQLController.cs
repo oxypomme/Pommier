@@ -13,15 +13,25 @@ namespace OxyUtils
 
         internal SQLController()
         {
-            ConnexionString = $"server={App.credits.sql.Server};userid={App.credits.sql.User};password={App.credits.sql.Password};database={App.credits.sql.Database}";
+            ConnexionString = $"server={App.credits.sql.Server};port={App.credits.sql.Port};database={App.credits.sql.Database};user={App.credits.sql.User};password={App.credits.sql.Password}";
+            Console.WriteLine(ConnexionString);
         }
 
         internal string RequestRPCStatus()
         {
-            using var con = new MySqlConnection(ConnexionString);
-            con.Open();
+            try
+            {
+                using var con = new MySqlConnection(ConnexionString);
+                //if (con.Ping())
+                {
+                    con.Open();
 
-            return new MySqlCommand("SELECT value FROM discord_rpc WHERE field=\"customStatus\"", con).ExecuteScalar().ToString();
+                    return new MySqlCommand("SELECT value FROM `discord_rpc` WHERE `field`=\"customStatus\";", con).ExecuteScalar().ToString();
+                }
+            }
+            catch (MySqlException e) { Console.WriteLine(e); }
+            Console.WriteLine("Server connexion failed");
+            return "libre de ses mouvements.";
         }
 
         internal void UpdateRPCStatus(string status)
@@ -29,11 +39,16 @@ namespace OxyUtils
             try
             {
                 using var con = new MySqlConnection(ConnexionString);
-                con.Open();
+                //if (con.Ping())
+                {
+                    con.Open();
 
-                new MySqlCommand($"UPDATE discord_rpc SET value=\"{status}\" WHERE field='customStatus'", con).ExecuteNonQuery();
+                    new MySqlCommand($"UPDATE discord_rpc SET `value`=\"{status}\" WHERE `field`='customStatus';", con).ExecuteNonQuery();
+                    Console.WriteLine("Update on sql success");
+                }
             }
-            catch (MySqlException) { Console.WriteLine("Can't update distant status"); }
+            catch (MySqlException e) { Console.WriteLine(e); }
+            Console.WriteLine("Server connexion failed");
         }
     }
 }

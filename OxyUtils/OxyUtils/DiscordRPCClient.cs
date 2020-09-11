@@ -14,7 +14,7 @@ namespace OxyUtils
     {
         private DiscordRpcClient client = new DiscordRpcClient(App.credits.discord.ApplicationID, 0);
 
-        public string customStatus = "est libre de ses mouvements.";
+        public string customStatus = "libre de ses mouvements.";
 
         public DiscordRPCClient()
         {
